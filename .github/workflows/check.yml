@@ -1,0 +1,29 @@
+name: Version Jira Ticket
+
+on:
+  push:
+
+jobs:
+  call_webhook_url:
+    runs-on: ubuntu-latest
+    if: ${{ github.base_ref == 'main' }} && startsWith(github.head_ref, 'feature')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Get Jira Ticket ID
+        if: ${{ github.base_ref == 'main' && github.head_ref == 'tes' }}
+        run: |
+          echo "${{ github.base_ref }} ${{ github.head_ref }}"
+          exit 0
+          TICKET_ID=$(echo "${{ github.event.pull_request.title }}" | egrep -o '[a-zA-Z]+-[0-9]+')
+          echo "ticket_id=$TICKET_ID" >> $GITHUB_ENV
+      - name: Echo 1
+        if: ${{ github.base_ref == 'main' && github.head_ref != 'tes' }}
+        run: |
+          echo 1
+          exit 0
+      - name: Echo 2
+        if: ${{ github.base_ref != 'main' && github.head_ref == 'tes'}}
+        run: |
+          echo 2
+          exit 1
